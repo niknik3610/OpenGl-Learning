@@ -1,0 +1,27 @@
+// Static tasks configuration.
+//
+// Example:
+[
+	{
+		"label": "Build",
+		"command": "rm -rf build;mkdir build;cd build;cmake ..;make",
+		//"args": [],
+		"use_new_terminal": false,
+		"reveal": "always",
+		"reveal_target": "dock",
+		"hide": "never",
+		"shell": "system",
+		"tags": []
+	},
+	{
+		"label": "Run",
+		"command": "cd build;./HelloWorld",
+		//"args": [],
+		"use_new_terminal": false,
+		"reveal": "always",
+		"reveal_target": "dock",
+		"hide": "never",
+		"shell": "system",
+		"tags": []
+	}
+]
