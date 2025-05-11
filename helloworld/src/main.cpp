@@ -13,13 +13,22 @@ const char* vertexShaderSource =
     "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
     "}\0";
 
-const char *fragmentShaderSource =
+const char *fragmentShaderSource_orange =
 	"#version 330 core\n"
 	"out vec4 FragColor;\n"
 	"void main()\n"
 	"{\n"
 	"   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
 	"}\n\0";
+
+const char *fragmentShaderSource_purple =
+	"#version 330 core\n"
+	"out vec4 FragColor;\n"
+	"void main()\n"
+	"{\n"
+	"   FragColor = vec4(0.830188679f, 0.015686275f, 0.909803922f, 1.0f);\n"
+	"}\n\0";
+
 
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -74,10 +83,14 @@ int main(int argc, char* args[]) {
 	}
 
 	//Compile Fragment Shader
-	unsigned int fragmentShader;
-	fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
+
+	unsigned int fragmentShader_orange = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader_orange, 1, &fragmentShaderSource_orange, NULL);
+	glCompileShader(fragmentShader_orange);
+
+	unsigned int fragmentShader_purple = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader_purple, 1, &fragmentShaderSource_purple, NULL);
+	glCompileShader(fragmentShader_purple);
 
 	glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
 	if (!success) {
@@ -90,7 +103,7 @@ int main(int argc, char* args[]) {
 	unsigned int shaderProgram;
 	shaderProgram = glCreateProgram();
 	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
+	glAttachShader(shaderProgram, fragmentShader_orange);
 	glLinkProgram(shaderProgram);
 
 	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
@@ -99,8 +112,23 @@ int main(int argc, char* args[]) {
 		std::cout << "ERROR::SHADER::PROGRAM_LINKING_FAILED\n" << infoLog << std::endl;
 		return -1;
 	}
+	glDeleteShader(fragmentShader_orange);
+
+
+	unsigned int shaderProgram_purple;
+	shaderProgram_purple = glCreateProgram();
+	glAttachShader(shaderProgram_purple, vertexShader);
+	glAttachShader(shaderProgram_purple, fragmentShader_purple);
+	glLinkProgram(shaderProgram_purple);
+
+	glGetProgramiv(shaderProgram_purple, GL_LINK_STATUS, &success);
+	if (!success) {
+		glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::PROGRAM_LINKING_FAILED\n" << infoLog << std::endl;
+		return -1;
+	}
 	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+	glDeleteShader(fragmentShader_purple);
 
 	//Tell OpenGL how to interpret vertex data
 	float vertices_0[] = {
@@ -171,6 +199,7 @@ int main(int argc, char* args[]) {
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glBindVertexArray(0);
 
+		glUseProgram(shaderProgram_purple);
 		glBindVertexArray(VAO_1);
 		glDrawArrays(GL_TRIANGLES, 0, 3);
 		glBindVertexArray(0);
